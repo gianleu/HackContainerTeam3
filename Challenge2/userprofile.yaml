@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tripinsights-userprofile-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripinsights-userprofile-api
+  template:
+    metadata:
+      labels:
+        app: tripinsights-userprofile-api
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: tripinsights-userprofile-api
+        image: registrycbz8543.azurecr.io/tripinsights/userprofile:1.0
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        - name: SQL_SERVER
+          value: sqlservercbz8543.database.windows.net
+        - name: SQL_DBNAME
+          value: mydrivingDB
+        - name: SQL_USER
+          value: sqladmincBz8543
+        - name: SQL_PASSWORD
+          value: qH3va3Xx6
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        ports:
+        - containerPort: 80
+          name: up-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tripinsights-userprofile
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: tripinsights-userprofile-api
