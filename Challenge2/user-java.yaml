@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tripinsights-user-java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripinsights-user-java
+  template:
+    metadata:
+      labels:
+        app: tripinsights-user-java
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: tripinsights-user-java
+        image: registrycbz8543.azurecr.io/tripinsights/user-java:1.0
+        env:
+        - name: SQL_USER
+          value: sqladmincBz8543
+        - name: SQL_PASSWORD
+          value: qH3va3Xx6
+        - name: SQL_SERVER
+          value: sqlservercbz8543.database.windows.net
+        - name: SQL_DBNAME
+          value: mydrivingDB
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+          name: poi-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tripinsights-user-java
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: tripinsights-user-java

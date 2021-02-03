@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tripinsights-poi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripinsights-poi
+  template:
+    metadata:
+      labels:
+        app: tripinsights-poi
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: tripinsights-poi
+        image: registrycbz8543.azurecr.io/tripinsights/poi:1.0
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        - name: SQL_SERVER
+          value: sqlservercbz8543.database.windows.net
+        - name: SQL_DBNAME
+          value: mydrivingDB
+        - name: SQL_USER
+          value: sqladmincBz8543
+        - name: SQL_PASSWORD
+          value: qH3va3Xx6
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+          name: poi-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tripinsights-poi
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: tripinsights-poi
