@@ -20,14 +20,13 @@ spec:
         env:
         - name: ALLOW_EMPTY_PASSWORD
           value: "yes"
-        - name: SQL_SERVER
-          value: sqlservercbz8543.database.windows.net
-        - name: SQL_DBNAME
-          value: mydrivingDB
-        - name: SQL_USER
-          value: sqladmincBz8543
-        - name: SQL_PASSWORD
-          value: qH3va3Xx6
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/secrets"
+          readOnly: true
+        ports:
+        - containerPort: 80
+          name: poi-port
         resources:
           requests:
             cpu: 100m
@@ -35,9 +34,13 @@ spec:
           limits:
             cpu: 250m
             memory: 256Mi
-        ports:
-        - containerPort: 80
-          name: poi-port
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-kvname"
 ---
 apiVersion: v1
 kind: Service
