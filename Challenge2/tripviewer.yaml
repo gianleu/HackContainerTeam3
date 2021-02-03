@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tripinsights-trip-viewer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripinsights-trip-viewer
+  template:
+    metadata:
+      labels:
+        app: tripinsights-trip-viewer
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: tripinsights-trip-viewer
+        image: registrycbz8543.azurecr.io/tripinsights/tripviewer:1.0
+        env:
+        - name: SQL_SERVER
+          value: sqlservercbz8543.database.windows.net
+        - name: SQL_DBNAME
+          value: mydrivingDB
+        - name: SQL_USER
+          value: sqladmincBz8543
+        - name: SQL_PASSWORD
+          value: qH3va3Xx6
+        - name: USERPROFILE_API_ENDPOINT
+          value: http://tripinsights-userprofile:80
+        - name: TRIPS_API_ENDPOINT
+          value: http://tripinsights-trips:80
+        - name: BING_MAPS_KEY
+          value: 123stella
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+          name: tripviewer-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tripinsights-trip-viewer
+spec:
+  ports:
+  - port: 80
+  type: LoadBalancer
+  selector:
+    app: tripinsights-trip-viewer
