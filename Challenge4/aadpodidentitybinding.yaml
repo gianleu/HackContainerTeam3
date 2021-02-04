@@ -1,0 +1,7 @@
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentityBinding
+metadata:
+  name: aad-kv-id-binding
+spec:
+  azureIdentity: aad-kv-id
+  selector: kv-id
