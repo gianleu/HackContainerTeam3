@@ -1,0 +1,8 @@
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzureIdentity
+metadata:
+  name: aad-kv-id
+spec:
+  type: 0
+  resourceID: /subscriptions/2009f869-247e-4bfb-ab22-d55b89f1e2ec/resourcegroups/teamResources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/adidentitykv
+  clientID: d985a768-60fd-4fff-8a61-1d7e13a33309

@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: tripinsights-poi
+        aadpodidbinding: kv-id
     spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
