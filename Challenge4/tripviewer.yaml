@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: tripinsights-trip-viewer
+        aadpodidbinding: kv-id
     spec:
       nodeSelector:
         "beta.kubernetes.io/os": linux
@@ -18,30 +19,33 @@ spec:
       - name: tripinsights-trip-viewer
         image: registrycbz8543.azurecr.io/tripinsights/tripviewer:1.0
         env:
-        - name: SQL_SERVER
-          value: sqlservercbz8543.database.windows.net
-        - name: SQL_DBNAME
-          value: mydrivingDB
-        - name: SQL_USER
-          value: sqladmincBz8543
-        - name: SQL_PASSWORD
-          value: qH3va3Xx6
         - name: USERPROFILE_API_ENDPOINT
-          value: http://tripinsights-userprofile:80
+          value: http://tripinsights-userprofile.team3ns:80
         - name: TRIPS_API_ENDPOINT
-          value: http://tripinsights-trips:80
+          value: http://tripinsights-trips.team3ns:80
         - name: BING_MAPS_KEY
           value: 123stgfghjf
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/secrets"
+          readOnly: true
+        ports:
+        - containerPort: 80
+          name: tripviewer-port
         resources:
           requests:
             cpu: 100m
             memory: 128Mi
           limits:
-            cpu: 250m
-            memory: 256Mi
-        ports:
-        - containerPort: 80
-          name: tripviewer-port
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-kvname"
 ---
 apiVersion: v1
 kind: Service
@@ -50,6 +54,6 @@ metadata:
 spec:
   ports:
   - port: 80
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: tripinsights-trip-viewer
